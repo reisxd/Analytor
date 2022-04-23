@@ -15,7 +15,7 @@ route.post('/', async (req, res) => {
   if (!req.user) return res.status(401).json({ error: 'Unauthorized.' });
   const { url } = req.body;
   const siteUrl = url.match(
-    /^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n?]+)/gim
+    /^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:/\n?]+)/gim
   );
   if (!siteUrl) return res.status(400).json({ error: 'Invalid site url.' });
   const site = await req.app

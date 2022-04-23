@@ -10,7 +10,7 @@ route.post('/', cors(), async (req, res) => {
   if (!req.headers['user-agent'])
     return res.status(400).json({ error: 'No user-agent header.' });
   const siteUrl = req.body.url.match(
-    /^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n?]+)/gim
+    /^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:/\n?]+)/gim
   );
   if (siteUrl[0] !== site.url)
     return res.status(400).json({ error: 'Invalid site url.' });
