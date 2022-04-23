@@ -1,16 +1,16 @@
-import Express from "express";
-import cors from "cors";
-import crypto from "crypto";
+import Express from 'express';
+import cors from 'cors';
+import crypto from 'crypto';
 
 const route = Express.Router();
 
 async function sha256(message) {
-  return await crypto.createHash("sha256").update(message).digest("hex");
+  return await crypto.createHash('sha256').update(message).digest('hex');
 }
-route.post("/", cors(), async (req, res) => {
+route.post('/', cors(), async (req, res) => {
   const token = req.body.token;
-  const site = await req.app.get("db").collection("sites").findOne({ token });
-  if (!site) return res.status(404).json({ error: "Site not found." });
+  const site = await req.app.get('db').collection('sites').findOne({ token });
+  if (!site) return res.status(404).json({ error: 'Site not found.' });
 
   const errorBucketId = await sha256(
     req.body.error.message +
@@ -19,13 +19,13 @@ route.post("/", cors(), async (req, res) => {
       req.body.error.column
   );
   const errorBucket = await req.app
-    .get("db")
-    .collection("errors")
+    .get('db')
+    .collection('errors')
     .findOne({ token });
   if (!errorBucket) {
     await req.app
-      .get("db")
-      .collection("errors")
+      .get('db')
+      .collection('errors')
       .insertOne({
         token,
         buckets: [
@@ -36,9 +36,9 @@ route.post("/", cors(), async (req, res) => {
             line: req.body.error.line,
             column: req.body.error.column,
             errorObject: req.body.error.errorObject,
-            count: 1,
-          },
-        ],
+            count: 1
+          }
+        ]
       });
   } else {
     const bucket = errorBucket.buckets.find(
@@ -46,8 +46,8 @@ route.post("/", cors(), async (req, res) => {
     );
     if (bucket) {
       await req.app
-        .get("db")
-        .collection("errors")
+        .get('db')
+        .collection('errors')
         .updateOne(
           { token },
           {
@@ -57,14 +57,14 @@ route.post("/", cors(), async (req, res) => {
                   bucket.count++;
                 }
                 return bucket;
-              }),
-            },
+              })
+            }
           }
         );
     } else {
       await req.app
-        .get("db")
-        .collection("errors")
+        .get('db')
+        .collection('errors')
         .updateOne(
           { token },
           {
@@ -76,9 +76,9 @@ route.post("/", cors(), async (req, res) => {
                 line: req.body.error.line,
                 column: req.body.error.column,
                 errorObject: req.body.error.errorObject,
-                count: 1,
-              },
-            },
+                count: 1
+              }
+            }
           }
         );
     }
